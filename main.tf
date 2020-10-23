@@ -1,5 +1,5 @@
 locals {
-	db_creds_password = jsondecode(data.aws_secretsmanager_secret_version.rds_master_pw.secret_string)
+	db_creds_password = jsondecode(data.aws_secretsmanager_secret_version.this_rds_master_pw.secret_string)
 }
 
 resource "aws_secretsmanager_secret" "rds_master_pw" {
@@ -9,16 +9,19 @@ resource "aws_secretsmanager_secret" "rds_master_pw" {
   tags = var.tags
 }
 
-resource "aws_secretsmanager_secret_version" "rds_master_pw" {
+resource "aws_secretsmanager_secret_version" "this_rds_master_pw" {
   secret_id      = data.aws_secretsmanager_secret.rds_master_pw.id
   secret_string  = local.db_creds_password
+	depends_on     = [aws_secretsmanager_secret.rds_master_pw]
 }
 
-data "aws_secretsmanager_secret" "rds_master_pw" {
+data "aws_secretsmanager_secret" "data_rds_master_pw_arn" {
+  depends_on     = [aws_secretsmanager_secret_version.data_rds_master_pw_version] 
   arn = aws_secretsmanager_secret.rds_master_pw.arn
 }
 
-data "aws_secretsmanager_secret_version" "rds_master_pw" {
+data "aws_secretsmanager_secret_version" "data_rds_master_pw_version" {
+	depends_on     = [aws_secretsmanager_secret_version.this_rds_master_pw]
 	secret_id = data.aws_secretsmanager_secret.rds_master_pw.id
 }
 
