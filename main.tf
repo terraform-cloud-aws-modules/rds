@@ -1,6 +1,5 @@
 locals {
-  db_subnet_group_name = var.db_subnet_group_name == "" ? join("", aws_db_subnet_group.this.*.name) : var.db_subnet_group_name
-	db_creds = jsondecode(data.aws_secretsmanager_secret_version.rds_master_pw.secret_string)
+	db_creds_password = jsondecode(data.aws_secretsmanager_secret_version.rds_master_pw.secret_string)
 }
 
 resource "aws_secretsmanager_secret" "rds_master_pw" {
@@ -11,9 +10,8 @@ resource "aws_secretsmanager_secret" "rds_master_pw" {
 }
 
 resource "aws_secretsmanager_secret_version" "rds_master_pw" {
-  secret_id      = aws_secretsmanager_secret.rds_master_pw.id
-  secret_string  = local.master_password
-  version_stages = ["AWSCURRENT"]
+  secret_id      = data.aws_secretsmanager_secret.rds_master_pw.id
+  secret_string  = local.db_creds_password
 }
 
 data "aws_secretsmanager_secret" "rds_master_pw" {
@@ -21,13 +19,7 @@ data "aws_secretsmanager_secret" "rds_master_pw" {
 }
 
 data "aws_secretsmanager_secret_version" "rds_master_pw" {
-  secret_id = data.aws_secretsmanager_secret.rds_master_pw.id
-}
-
-resource "aws_db_subnet_group" "subnet_group" {
-  name                    = var.rds_subnetgroup_name
-  subnet_ids              = var.rds_subnet_ids
-  tags                    = var.tags
+	secret_id = data.aws_secretsmanager_secret.rds_master_pw.id
 }
 
 resource "aws_rds_cluster" "default" {
@@ -36,9 +28,8 @@ resource "aws_rds_cluster" "default" {
   availability_zones      = var.rds_az
   database_name           = var.rds_db_name
   master_username         = var.rds_master_user
-  master_password         = local.db_creds.password
+  master_password         = local.db_creds_password
   backup_retention_period = var.rds_backup_retention
   preferred_backup_window = var.rds_backup_window
-  db_subnet_group_name    = local.db_subnet_group_name
   tags                    = var.tags
 }

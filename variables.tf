@@ -1,7 +1,5 @@
 variable "tags" {}
 
-variable "subnetgroup_name" {}
-
 variable "subnet_ids" {
   type    = list
   default = []
