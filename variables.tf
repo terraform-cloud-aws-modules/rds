@@ -37,3 +37,22 @@ variable "rds_backup_retention" {
 variable "rds_backup_window" {
   type    = string
 }
+
+variable "rds_final_snapshot" {
+  default = false
+}
+
+variable "rds_password_length" {
+  type    = number
+  default = "16"
+}
+
+variable "rds_instance_count" {
+  type    = number
+  default = "2"
+}
+
+variable "rds_instance_class" {
+  type    = string
+  default = "db.t2.large"
+}

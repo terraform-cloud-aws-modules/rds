@@ -27,3 +27,13 @@ output "this_rds_cluster_reader_endpoint" {
   description = "The cluster reader endpoint"
   value       = aws_rds_cluster.default.reader_endpoint
 }
+
+output "this_rds_cluster_instance_endpoints" {
+  description = "A list of all cluster instance endpoints"
+  value       = aws_rds_cluster_instance.default.*.endpoint
+}
+
+output "this_rds_cluster_instance_ids" {
+  description = "A list of all cluster instance ids"
+  value       = aws_rds_cluster_instance.default.*.id
+}
