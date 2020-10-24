@@ -26,10 +26,6 @@ variable "rds_master_user" {
   type    = string
 }
 
-variable "rds_master_pw" {
-  type    = string
-}
-
 variable "rds_backup_retention" {
   type    = string
 }
@@ -39,7 +35,7 @@ variable "rds_backup_window" {
 }
 
 variable "rds_final_snapshot" {
-  default = false
+  default = true
 }
 
 variable "rds_password_length" {

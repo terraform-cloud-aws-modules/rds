@@ -35,4 +35,5 @@ resource "aws_rds_cluster_instance" "default" {
   instance_class          = var.rds_instance_class
   engine                  = aws_rds_cluster.default.engine
   engine_version          = aws_rds_cluster.default.engine_version
+  tags                    = var.tags
 }
